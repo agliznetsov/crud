@@ -9,7 +9,7 @@ import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 
-public class TransformServiceTests {
+public class TransformServiceTest {
     TransformService transformService;
 
     @Before

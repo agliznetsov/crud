@@ -2,18 +2,9 @@ package org.crud.core.util;
 
 import java.time.*;
 import java.time.format.DateTimeParseException;
-import java.util.Date;
 
 public class DateUtils {
     public static final ZoneOffset LOCAL_ZONE_OFFSET = Clock.systemDefaultZone().getZone().getRules().getOffset(Instant.EPOCH);
-
-    public static ZonedDateTime fromDate(Date date) {
-        return fromMillis(date.getTime());
-    }
-
-    public static Date toDate(ZonedDateTime dateTime) {
-        return new Date(toMillis(dateTime));
-    }
 
     public static ZonedDateTime fromMillis(long time) {
         Instant instant = Instant.ofEpochMilli(time);

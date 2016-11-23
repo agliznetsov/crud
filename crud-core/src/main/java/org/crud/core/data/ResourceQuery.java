@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class ResourceQuery {
-    int skip = 0;
-    int max = 10;
+    Integer skip;
+    Integer max;
     boolean count = false;
     Sort sort;
     Filter filter;
