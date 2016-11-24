@@ -1,8 +1,7 @@
 package org.crud.hibernate;
 
 import org.crud.core.data.CrudRepository;
-import org.crud.core.data.ResourceQuery;
-import org.crud.core.data.ResourceResponse;
+import org.crud.core.data.DataQuery;
 import org.crud.core.util.ReflectUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -55,15 +54,15 @@ public abstract class HibernateRepository<T, ID extends Serializable> implements
     }
 
     @Override
-    public long count() {
+    public long countAll() {
         Criteria criteria = criteria();
         criteria.setProjection(Projections.rowCount());
         return ((Number) criteria.uniqueResult()).longValue();
     }
 
     @Override
-    public void delete(ID id) {
-        T entity = findOne(id);
+    public void deleteOne(ID id) {
+        T entity = getOne(id);
         delete(entity);
     }
 
@@ -80,22 +79,22 @@ public abstract class HibernateRepository<T, ID extends Serializable> implements
     }
 
     @Override
-    public ResourceResponse<T> query(ResourceQuery query) {
+    public List<T> find(DataQuery query) {
         if (criteriaBuilder == null) {
             throw new IllegalStateException("CriteriaBuilder is not set");
         }
-        ResourceResponse<T> response = new ResourceResponse<T>();
-        if (query.isCount()) {
-            Criteria criteria = criteriaBuilder.countCriteria(criteria(), query);
-            Number number = (Number) criteria.uniqueResult();
-            response.setCount(number.longValue());
+        Criteria criteria = criteriaBuilder.queryCriteria(criteria(), query);
+        return criteria.list();
+    }
+
+    @Override
+    public long count(DataQuery query) {
+        if (criteriaBuilder == null) {
+            throw new IllegalStateException("CriteriaBuilder is not set");
         }
-        if (response.getCount() == null || response.getCount() > 0) {
-            Criteria criteria = criteriaBuilder.queryCriteria(criteria(), query);
-            List list = criteria.list();
-            response.setItems(list);
-        }
-        return response;
+        Criteria criteria = criteriaBuilder.countCriteria(criteria(), query);
+        Number number = (Number) criteria.uniqueResult();
+        return number.longValue();
     }
 
     public void useGenericTypes() {

@@ -1,5 +1,7 @@
 package org.crud.core.util;
 
+import lombok.SneakyThrows;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.HashMap;
@@ -143,4 +145,9 @@ public abstract class ReflectUtils {
         return field;
     }
 
+    @SneakyThrows
+    public static void setField(Object object, String path, Object value) {
+        Field field = getField(object.getClass(), path);
+        field.set(object, value);
+    }
 }

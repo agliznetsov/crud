@@ -1,9 +1,8 @@
 package org.crud.core.data;
 
-import java.io.Serializable;
 import java.util.List;
 
-public interface CrudRepository<T, ID extends Serializable> {
+public interface CrudRepository<T, ID> {
     <S extends T> S save(S entity);
 
     T findOne(ID id);
@@ -19,13 +18,17 @@ public interface CrudRepository<T, ID extends Serializable> {
 
     List<T> findAll();
 
-    long count();
+    long countAll();
 
-    void delete(ID id);
+    List<T> find(DataQuery query);
+
+    long count(DataQuery query);
+
+    void deleteOne(ID id);
 
     void delete(T entity);
 
     void deleteAll();
 
-    ResourceResponse<T> query(ResourceQuery query);
+
 }

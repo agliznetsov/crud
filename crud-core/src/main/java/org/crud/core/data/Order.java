@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Order {
     String property;
-    OrderDirection direction = OrderDirection.ASC.ASC;
+    OrderDirection direction = OrderDirection.ASC;
 
     public Order(String name) {
         property = name;

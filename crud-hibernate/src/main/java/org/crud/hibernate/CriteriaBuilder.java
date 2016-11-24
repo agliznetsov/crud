@@ -28,7 +28,7 @@ public class CriteriaBuilder {
         aliases.put(alias, path);
     }
 
-    public Criteria queryCriteria(Criteria criteria, ResourceQuery query) {
+    public Criteria queryCriteria(Criteria criteria, DataQuery query) {
         if (query.getSort() != null) {
             for (org.crud.core.data.Order order : query.getSort().getOrders()) {
                 criteria.addOrder(order.getDirection() == OrderDirection.ASC ? Order.asc(order.getProperty()) : Order.desc(order.getProperty()));
@@ -46,13 +46,13 @@ public class CriteriaBuilder {
         return criteria;
     }
 
-    public Criteria countCriteria(Criteria criteria, ResourceQuery query) {
+    public Criteria countCriteria(Criteria criteria, DataQuery query) {
         addFilters(query, criteria);
         criteria.setProjection(Projections.rowCount());
         return criteria;
     }
 
-    private void addFilters(ResourceQuery query, Criteria criteria) {
+    private void addFilters(DataQuery query, Criteria criteria) {
         if (query.getFilter() != null)
             criteria.add(toHibernateCriterion(query.getFilter(), criteria));
     }

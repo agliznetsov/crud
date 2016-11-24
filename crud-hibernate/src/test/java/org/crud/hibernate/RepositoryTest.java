@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.annotation.Resource;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -93,20 +93,18 @@ public class RepositoryTest {
             sf.flush();
         }
         {
-            ResourceQuery query = new ResourceQuery();
+            DataQuery query = new DataQuery();
             query.setFilter(new CompositeFilter(CompositeOperator.AND, new PropertyFilter(FilterOperator.EQ, "name", "test"), new PropertyFilter(FilterOperator.GTE, "id", "1")));
-            ResourceResponse response = repository.query(query);
-            assertNull(response.getCount());
-            assertEquals(2, response.getItems().size());
+            List items = repository.query(query);
+            assertEquals(2, items.size());
         }
         {
-            ResourceQuery query = new ResourceQuery();
-            query.setCount(true);
+            DataQuery query = new DataQuery();
             query.setSkip(1);
             query.setMax(2);
-            ResourceResponse response = repository.query(query);
-            assertEquals(2, response.getCount().longValue());
-            assertEquals(1, response.getItems().size());
+            List items = repository.query(query);
+            assertEquals(2, repository.count(query));
+            assertEquals(1, items.size());
         }
     }
 

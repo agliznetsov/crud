@@ -27,7 +27,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.0.11.Final</version>
+            <version>${hibernate.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -44,7 +44,7 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.4.193</version>
-            <scope>runtime</scope>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
