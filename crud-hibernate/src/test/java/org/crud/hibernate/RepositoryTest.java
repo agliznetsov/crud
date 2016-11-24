@@ -95,14 +95,14 @@ public class RepositoryTest {
         {
             DataQuery query = new DataQuery();
             query.setFilter(new CompositeFilter(CompositeOperator.AND, new PropertyFilter(FilterOperator.EQ, "name", "test"), new PropertyFilter(FilterOperator.GTE, "id", "1")));
-            List items = repository.query(query);
+            List items = repository.find(query);
             assertEquals(2, items.size());
         }
         {
             DataQuery query = new DataQuery();
             query.setSkip(1);
             query.setMax(2);
-            List items = repository.query(query);
+            List items = repository.find(query);
             assertEquals(2, repository.count(query));
             assertEquals(1, items.size());
         }
