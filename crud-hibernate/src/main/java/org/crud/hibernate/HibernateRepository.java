@@ -2,6 +2,7 @@ package org.crud.hibernate;
 
 import org.crud.core.data.CrudRepository;
 import org.crud.core.data.DataQuery;
+import org.crud.core.data.Identifiable;
 import org.crud.core.util.ReflectUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -10,7 +11,13 @@ import org.hibernate.criterion.Projections;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.hibernate.criterion.Restrictions.in;
+import static org.hibernate.criterion.Restrictions.not;
 
 public abstract class HibernateRepository<T, ID extends Serializable> implements CrudRepository<T, ID> {
     protected Class<T> entityClass;
@@ -103,6 +110,23 @@ public abstract class HibernateRepository<T, ID extends Serializable> implements
         if (types[0] instanceof Class) {
             this.entityClass = (Class<T>) types[0];
         }
+    }
+
+    protected <T extends Identifiable> void updateCollection(Collection<T> collection, Class<T> itemClass) {
+        updateCollection(collection, itemClass, "id");
+    }
+
+    protected <T extends Identifiable> void updateCollection(Collection<T> collection, Class<T> itemClass, String idName) {
+        Session session = session();
+
+        //delete items missing in the collection parameter
+        Set<?> ids = collection.stream().filter(it -> it.getId() != null).map(Identifiable::getId).collect(Collectors.toSet());
+        List<?> toDelete = session.createCriteria(itemClass).add(not(in(idName, ids))).list();
+        toDelete.forEach(session::delete);
+        session.flush();
+
+        //save existing items
+        collection.forEach(session::saveOrUpdate);
     }
 
     protected abstract Session session();

@@ -19,6 +19,9 @@ public class Document {
 
     LocalDateTime created;
 
+    @ManyToOne
+    Client client;
+
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "document")
     Set<DocumentItem> items = new HashSet<>();
 }

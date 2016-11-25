@@ -1,6 +1,8 @@
 package org.crud.core.transform;
 
 
+import org.crud.core.data.EntityProxy;
+import org.crud.core.data.Identifiable;
 import org.crud.core.transform.transformers.*;
 import org.crud.core.util.ReflectUtils;
 
@@ -31,6 +33,8 @@ public class TransformServiceImpl implements TransformService {
         registerTransformer(String.class, ZonedDateTime.class, toObjectTransformer);
         registerTransformer(String.class, LocalDateTime.class, toObjectTransformer);
         registerTransformer(String.class, Enum.class, new StringToEnumTransformer());
+        registerTransformer(Identifiable.class, EntityProxy.class, new Identifiable2ProxyTransformer());
+        registerTransformer(EntityProxy.class, Identifiable.class, new Proxy2IdentifiableTransformer());
     }
 
     @Override

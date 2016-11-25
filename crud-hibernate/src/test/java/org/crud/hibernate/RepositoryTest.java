@@ -2,6 +2,7 @@ package org.crud.hibernate;
 
 import org.crud.core.data.*;
 import org.crud.core.transform.TransformServiceImpl;
+import org.crud.hibernate.model.Client;
 import org.crud.hibernate.model.Document;
 import org.crud.hibernate.model.DocumentItem;
 import org.crud.hibernate.model.Product;
@@ -24,28 +25,24 @@ public class RepositoryTest {
     private HibernateRepository<Document, Integer> repository;
 
     Product product;
+    Client client;
 
     @Before
     public void setUp() throws Exception {
-        repository = new HibernateRepository<Document, Integer>() {
-            @Override
-            public <S extends Document> S save(S entity) {
-                S doc = super.save(entity);
-                new HibernateUtils(session()).updateCollection(entity.getItems(), DocumentItem.class);
-                return doc;
-            }
-
+        repository = new DocumentRepository() {
             @Override
             protected Session session() {
                 return sf.getSession();
             }
         };
-        repository.useGenericTypes();
         repository.setCriteriaBuilder(new CriteriaBuilder(repository.getEntityClass(), new TransformServiceImpl()));
 
         product = new Product();
         product.setName("product_name");
         sf.getSession().persist(product);
+        client = new Client();
+        client.setName("client_name");
+        sf.getSession().persist(client);
         sf.flush();
     }
 
@@ -108,8 +105,23 @@ public class RepositoryTest {
         }
     }
 
+    @Test
+    public void nested_filter() throws Exception {
+        {
+            repository.save(createDocument());
+            sf.flush();
+        }
+        {
+            DataQuery query = new DataQuery();
+            query.setFilter(new PropertyFilter(FilterOperator.EQ, "client.name", "client_name"));
+            List items = repository.find(query);
+            assertEquals(1, items.size());
+        }
+    }
+
     private Document createDocument() {
         Document document = new Document();
+        document.setClient(client);
         document.setName("test");
         document.getItems().add(new DocumentItem(null, document, product, 10));
         document.getItems().add(new DocumentItem(null, document, product, 20));

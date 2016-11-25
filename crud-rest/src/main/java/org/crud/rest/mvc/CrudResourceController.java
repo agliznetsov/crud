@@ -18,6 +18,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class CrudResourceController {
     }
 
     private String getResourceURI(String name) {
-        return MvcUriComponentsBuilder.fromMethodName(getClass(), "list", name).buildAndExpand().encode().toUriString();
+        return MvcUriComponentsBuilder.fromMethodName(getClass(), "list", name, null).buildAndExpand().encode().toUriString();
     }
 
     @RequestMapping(value = "{resourceName}", method = {GET})
@@ -70,7 +71,7 @@ public class CrudResourceController {
     @RequestMapping(value = "/{resourceName}/{id}", method = {GET})
     public Object getById(@PathVariable("resourceName") String resourceName, @PathVariable("id") String id) {
         ResourceInfo resourceInfo = getResource(resourceName);
-        Object entityId = transformService.transform(id, resourceInfo.getIdClass());
+        Serializable entityId = (Serializable) transformService.transform(id, resourceInfo.getIdClass());
         Object entity = resourceInfo.getRepository().getOne(entityId);
         if (resourceInfo.getDtoClass() != null) {
             entity = transformService.transform(entity, resourceInfo.getDtoClass());
@@ -99,7 +100,7 @@ public class CrudResourceController {
     public ResponseEntity delete(@PathVariable("resourceName") String resourceName, @PathVariable("id") String id) {
         ResourceInfo resourceInfo = getResource(resourceName);
         checkResourceAction(resourceInfo, ResourceAction.DELETE);
-        Object entityId = transformService.transform(id, resourceInfo.getIdClass());
+        Serializable entityId = (Serializable) transformService.transform(id, resourceInfo.getIdClass());
         resourceInfo.getRepository().deleteOne(entityId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
@@ -120,7 +121,7 @@ public class CrudResourceController {
     public void patch(@PathVariable("resourceName") String resourceName, @PathVariable("id") String id, @RequestBody JsonPatchOperation[] operations) {
         ResourceInfo resourceInfo = getResource(resourceName);
         checkResourceAction(resourceInfo, ResourceAction.PATCH);
-        Object entityId = transformService.transform(id, resourceInfo.getIdClass());
+        Serializable entityId = (Serializable) transformService.transform(id, resourceInfo.getIdClass());
         Object entity = resourceInfo.getRepository().getOne(entityId);
         patchEntity(entity, operations);
         saveEntity(resourceInfo, entity);

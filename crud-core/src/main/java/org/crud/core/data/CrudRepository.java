@@ -1,8 +1,9 @@
 package org.crud.core.data;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface CrudRepository<T, ID> {
+public interface CrudRepository<T, ID extends Serializable> {
     <S extends T> S save(S entity);
 
     T findOne(ID id);

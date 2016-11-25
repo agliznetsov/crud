@@ -1,5 +1,6 @@
 package org.crud.hibernate;
 
+import org.crud.hibernate.model.Client;
 import org.crud.hibernate.model.Document;
 import org.crud.hibernate.model.DocumentItem;
 import org.crud.hibernate.model.Product;
@@ -73,6 +74,7 @@ public class SessionFactoryRule implements MethodRule {
                 .addAnnotatedClass(Document.class)
                 .addAnnotatedClass(DocumentItem.class)
                 .addAnnotatedClass(Product.class)
+                .addAnnotatedClass(Client.class)
                 .getMetadataBuilder()
                 .build();
 

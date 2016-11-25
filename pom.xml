@@ -13,6 +13,7 @@
         <module>crud-core</module>
         <module>crud-hibernate</module>
         <module>crud-rest</module>
+        <module>crud-showcase</module>
     </modules>
 
     <properties>
