@@ -28,7 +28,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/resources")
+@RequestMapping(value = "${org.crud.resources.path:/resources}")
 public class CrudResourceController {
 
     @Autowired

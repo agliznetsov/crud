@@ -1,9 +1,12 @@
 package org.crud.showcase;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.models.Info;
+import io.swagger.models.Swagger;
 import org.crud.core.data.CrudRepository;
 import org.crud.core.transform.TransformService;
 import org.crud.core.transform.TransformServiceImpl;
+import org.crud.core.util.MapUtils;
 import org.crud.rest.mvc.CrudResourceController;
 import org.crud.rest.resource.ResourceAction;
 import org.crud.rest.resource.ResourceInfo;
@@ -17,6 +20,9 @@ import org.crud.showcase.dto.BookDTO;
 import org.crud.showcase.model.Book;
 import org.crud.showcase.model.BookChapter;
 import org.crud.showcase.model.Person;
+import org.crud.swagger.SwaggerBuilder;
+import org.crud.swagger.SwaggerSupplier;
+import org.crud.swagger.mvc.SwaggerController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -25,6 +31,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import javax.transaction.Transactional;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -63,6 +70,20 @@ public class DemoApplication implements ApplicationRunner {
         return new CrudResourceController();
     }
 
+    @Bean
+    public SwaggerController swaggerController() {
+        return new SwaggerController();
+    }
+
+    @Bean
+    public SwaggerSupplier swaggerSupplierResources(ResourceInfoSupplier resourceInfoSupplier) {
+        return () -> {
+            SwaggerBuilder sb = new SwaggerBuilder();
+            resourceInfoSupplier.get().values().forEach(sb::crudResource);
+            return sb.build();
+        };
+    }
+
     private void addResource(ResourceInfoRegistry registry, Class eClass, Class dtoClass, Set<ResourceAction> actions) {
         CrudRepository repository = repositories.stream().filter(it -> it.getEntityClass().equals(eClass)).findFirst().get();
         ResourceInfo info = ResourceInfo.builder()
@@ -87,8 +108,8 @@ public class DemoApplication implements ApplicationRunner {
         transformService().registerBeanPair(BookChapter.class, BookChapterDTO.class);
         transformService().registerBeanPair(Book.class, BookDTO.class);
 
-        Person john = new Person(null, "John", "Doe");
-        Person jane = new Person(null, "Jane", "Smith");
+        Person john = new Person(null, "John", "Doe", null);
+        Person jane = new Person(null, "Jane", "Smith", null);
         personRepository.save(john);
         personRepository.save(jane);
         Book book = new Book();

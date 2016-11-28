@@ -14,6 +14,7 @@
         <module>crud-hibernate</module>
         <module>crud-rest</module>
         <module>crud-showcase</module>
+        <module>crud-swagger</module>
     </modules>
 
     <properties>
@@ -23,6 +24,7 @@
         <hibernate.version>5.0.11.Final</hibernate.version>
         <springframework.version>4.3.4.RELEASE</springframework.version>
         <jackson.version>2.8.4</jackson.version>
+        <swagger.version>1.5.10</swagger.version>
     </properties>
 
     <dependencies>

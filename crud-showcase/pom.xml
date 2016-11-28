@@ -43,6 +43,11 @@
             <artifactId>crud-hibernate</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.crud</groupId>
+            <artifactId>crud-swagger</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.h2database</groupId>

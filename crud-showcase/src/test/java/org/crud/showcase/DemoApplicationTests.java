@@ -1,6 +1,8 @@
 package org.crud.showcase;
 
+import io.swagger.models.Swagger;
 import org.crud.core.data.EntityProxy;
+import org.crud.core.util.MapUtils;
 import org.crud.showcase.dto.BookChapterDTO;
 import org.crud.showcase.dto.BookDTO;
 import org.crud.showcase.model.Person;
@@ -31,6 +33,13 @@ public class DemoApplicationTests {
 	}
 
 	@Test
+	public void swagger() throws Exception {
+		Map swagger = restTemplate.getForObject("/swagger?title=Resources", Map.class);
+		List tags = (List) swagger.get("tags");
+		assertEquals(2, tags.size());
+	}
+
+	@Test
 	public void create_person() throws Exception {
 		Long id = savePerson();
 		Person person = restTemplate.getForObject("/resources/Person/" + id, Person.class);
@@ -38,7 +47,7 @@ public class DemoApplicationTests {
 	}
 
 	private Long savePerson() {
-		Person person = new Person(null, "test", "test");
+		Person person = new Person(null, "test", "test", null);
 		Map response = restTemplate.postForObject("/resources/Person", person, Map.class);
 		Object id = response.get("id");
 		assertNotNull(id);
