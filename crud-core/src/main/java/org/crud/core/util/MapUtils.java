@@ -1,9 +1,29 @@
 package org.crud.core.util;
 
+
+import lombok.NonNull;
+
 import java.util.*;
 
 @SuppressWarnings("unchecked")
-public class MapUtils {
+public abstract class MapUtils {
+
+    /**
+     * Create set out of given elements
+     *
+     */
+    public static <E> Set<E> set(E... elements) {
+        HashSet<E> set = new HashSet<>(elements.length);
+        Collections.addAll(set, elements);
+        return set;
+    }
+
+    /**
+     * Create a map out of given key/value pairs
+     *
+     * @param params key/values pairs
+     * @return the created map
+     */
     public static <K, V> Map<K, V> map(Object... params) {
         if (params.length % 2 != 0) {
             throw new IllegalArgumentException("params.length");
@@ -16,8 +36,8 @@ public class MapUtils {
     }
 
     /**
-     * Variant of the map method that allows "deep" string properties to be used, i.e. ("a.b.c",5) creates a hashmaps containing
-     * the key "a", pointing to an hashmap containing the key "b" pointing to an hashmap containing the value 5.
+     * Variant of the map method that allows "deep" string properties to be used, i.e. ("a.b.c",5) creates a map containing
+     * the key "a", pointing to a map containing the key "b" pointing to a map containing the value 5.
      *
      * @param params list of property / value pairs
      * @return the created map
@@ -34,29 +54,29 @@ public class MapUtils {
     }
 
     /***
-     * Returns the value of the nested property.
-     *
      * @param map
      * @param path Path to the property using the dot notation f.e.: "parent.type.name"
+     * @return the value of the nested property using its path.
      */
-    public static <T> T getPath(Map map, String path) {
-        return getValue(map, Arrays.asList(path.split("\\.")), 0);
+    public static <T> T getValue(Map map, @NonNull String path) {
+        return getValue(map, path.split("\\."));
     }
 
-    public static <T> T getValue(Map map, String... keys) {
-        return getValue(map, Arrays.asList(keys), 0);
-    }
-
-    public static <E> HashSet<E> newHashSet(E... elements) {
-        HashSet<E> set = new HashSet<>(elements.length);
-        Collections.addAll(set, elements);
-        return set;
+    /***
+     * @param map
+     * @param keys path to the property as a successive list of keys
+     * @return the value of the nested property using its path.
+     */
+    public static <T> T getValue(Map map, @NonNull String... keys) {
+        if (keys.length == 0) {
+            throw new IllegalArgumentException("keys parameter is empty");
+        }
+        return getValue(map, keys, 0);
     }
 
     public static <T> void putDeepValue(Map<String, T> map, String keyPath, T v) {
-        HashMap subMap = (HashMap) map;
-
-        String[] propertyPath = keyPath.toString().split("\\.");
+        Map subMap = map;
+        String[] propertyPath = keyPath.split("\\.");
 
         int j = 0;
         for (; j < propertyPath.length - 1; j++) {
@@ -71,15 +91,15 @@ public class MapUtils {
         subMap.put(propertyPath[j], v);
     }
 
-    private static <T> T getValue(Object target, List<String> keys, int index) {
+    private static <T> T getValue(Object target, String[] keys, int index) {
         Object tmp = null;
         if (target instanceof Map) {
-            tmp = ((Map) target).get(keys.get(index));
+            tmp = ((Map) target).get(keys[index]);
         } else if (target instanceof List) {
-            tmp = ((List) target).get(Integer.parseInt(keys.get(index)));
+            tmp = ((List) target).get(Integer.parseInt(keys[index]));
         }
         if (tmp != null) {
-            if (index < keys.size() - 1)
+            if (index < keys.length - 1)
                 return getValue(tmp, keys, index + 1);
             else
                 return (T) tmp;
